@@ -16,8 +16,8 @@ class MyApp extends StatelessWidget {
       builder: (context, orientation, deviceType) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Dietify',
-          theme: AppTheme.neonTheme,
+          title: 'ShotParty',
+            theme: AppTheme.neonTheme,
           darkTheme: AppTheme.neonTheme,
           home: HomePage(),
         );
