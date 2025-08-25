@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shotparty/models/providers/player_provider.dart';
 import 'package:shotparty/pages/playground.dart';
 import 'package:shotparty/widgets/buttons.dart';
 import 'package:sizer/sizer.dart';
@@ -12,16 +14,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<String> jugadores = [];
-
-  void _agregarJugador() {
-    setState(() {
-      jugadores.add("Jugador ${jugadores.length + 1}");
-    });
-  }
-
+  late final PlayerProvider playerProvider;
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
+    playerProvider = Provider.of(context);
     return Scaffold(
       body: Center(
         child: Column(
@@ -55,21 +52,18 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 2.h),
-
-                  // Lista de jugadores con scroll
                   Expanded(
                     child: ListView.builder(
-                      itemCount: jugadores.length,
+                      itemCount: playerProvider.players.length,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          leading: Icon(Icons.person, color: Colors.cyanAccent),
+                          leading: Icon(Icons.person, color: theme.secondary),
                           title: Text(
                             jugadores[index],
                             style: TextStyle(color: Colors.white),
                           ),
                           trailing: IconButton(
-                            icon: Icon(Icons.close, color: Colors.redAccent),
+                            icon: Icon(Icons.close, color: theme.primary),
                             onPressed: () {
                               setState(() {
                                 jugadores.removeAt(index);
@@ -81,9 +75,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
 
-                  // Botón añadir jugador
                   TextButton.icon(
-                    onPressed: _agregarJugador,
+                    onPressed: () {
+                      
+                    },
                     icon: Icon(Icons.add, color: Colors.pinkAccent),
                     label: Text(
                       "Añadir jugador",
