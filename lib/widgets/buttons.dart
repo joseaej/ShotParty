@@ -40,6 +40,27 @@ Widget neonButton(
   );
 }
 
+Widget elevatedDialogButton(
+  BuildContext context, {
+  required String text,
+  required VoidCallback onPressed,
+}) {
+  return ElevatedButton(
+    
+    onPressed: onPressed,
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.white,
+      foregroundColor: Colors.redAccent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 14),
+    ),
+    child: Text(
+      text,
+      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    ),
+  );
+}
+
 Widget outlineNeoButton(
   BuildContext context, {
   required String text,

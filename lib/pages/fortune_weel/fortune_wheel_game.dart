@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:provider/provider.dart';
+import 'package:shotparty/models/providers/player_provider.dart';
 import 'package:shotparty/widgets/buttons.dart';
 import 'package:shotparty/widgets/wheel_selected_item.dart';
 import 'package:sizer/sizer.dart';
@@ -15,9 +18,9 @@ class FortuneWheelGame extends StatefulWidget {
 class _FortuneWheelGameState extends State<FortuneWheelGame> {
   final StreamController<int> selected = StreamController<int>();
   final wheelItems = <String>['Reto', 'Verdad', 'Chupito'];
-
   int? lastSelected;
-
+  final Random randomPleopleIndex = Random();
+  late final playerProvider;
   @override
   void dispose() {
     selected.close();
@@ -26,18 +29,20 @@ class _FortuneWheelGameState extends State<FortuneWheelGame> {
 
   void _spinWheel() {
     final index = Fortune.randomInt(0, wheelItems.length);
-    lastSelected = index; // lo guardamos
-    selected.add(index); // lo enviamos al stream
+    lastSelected = index;
+    selected.add(index);
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    List<Color> whelColors = [
+    final whelColors = [
       theme.colorScheme.primary,
       theme.colorScheme.secondary,
       theme.colorScheme.tertiary,
     ];
+    playerProvider = Provider.of<PlayerProvider>(context);
+
     return Scaffold(
       body: Column(
         children: [
@@ -76,25 +81,39 @@ class _FortuneWheelGameState extends State<FortuneWheelGame> {
               onAnimationEnd: () {
                 if (lastSelected != null) {
                   final winner = wheelItems[lastSelected!];
-                  switch (winner) {
-                    case "Reto":
-                      challengeDialogItem(context,peopleName: "Jose");
-                      break;
-
-                    case "Verdad":
-                      break;
-                    case "Chupito":
-                      
-                      break;
-                  }
+                  showWheelDialog(winner);
                 }
               },
             ),
           ),
-          outlineNeoButton(context, text: "Girar ruleta", onPressed: _spinWheel),
+          outlineNeoButton(
+            context,
+            text: "Girar ruleta",
+            onPressed: _spinWheel,
+          ),
           SizedBox(height: 10.h),
         ],
       ),
     );
+  }
+
+  void showWheelDialog(String winner) {
+    switch (winner) {
+      case "Reto":
+        if (playerProvider.players.isNotEmpty) {
+          final randomPlayer =
+              playerProvider.players[randomPleopleIndex.nextInt(
+                playerProvider.players.length,
+              )];
+          challengeDialogItem(context, peopleName: randomPlayer.name);
+        }
+        break;
+      case "Verdad":
+        // TODO: lógica para "Verdad"
+        break;
+      case "Chupito":
+        // TODO: lógica para "Chupito"
+        break;
+    }
   }
 }

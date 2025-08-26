@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shotparty/models/providers/player_provider.dart';
-import 'package:shotparty/pages/playground.dart';
 import 'package:shotparty/widgets/buttons.dart';
+import 'package:shotparty/widgets/new_people_modal.dart';
 import 'package:sizer/sizer.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,17 +13,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<String> jugadores = [];
-  late final PlayerProvider playerProvider;
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
-    playerProvider = Provider.of(context);
+    final playerProvider = Provider.of<PlayerProvider>(context);
+    final TextEditingController textEditingController = TextEditingController();
     return Scaffold(
       body: Center(
         child: Column(
           children: [
-            SizedBox(height: 5.h,),
+            SizedBox(height: 5.h),
             Image.asset(
               'assets/icons/shotparty_icon.png',
               height: 20.h,
@@ -36,11 +35,7 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.all(3.w),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: theme.primary,
-                  width: 2,
-                ),
-                
+                border: Border.all(color: theme.primary, width: 2),
               ),
               child: Column(
                 children: [
@@ -56,18 +51,17 @@ class _HomePageState extends State<HomePage> {
                     child: ListView.builder(
                       itemCount: playerProvider.players.length,
                       itemBuilder: (context, index) {
+                        final player = playerProvider.players[index];
                         return ListTile(
                           leading: Icon(Icons.person, color: theme.secondary),
                           title: Text(
-                            jugadores[index],
-                            style: TextStyle(color: Colors.white),
+                            player.name,
+                            style: const TextStyle(color: Colors.white),
                           ),
                           trailing: IconButton(
                             icon: Icon(Icons.close, color: theme.primary),
                             onPressed: () {
-                              setState(() {
-                                jugadores.removeAt(index);
-                              });
+                              playerProvider.removePlayer(player.id);
                             },
                           ),
                         );
@@ -77,10 +71,10 @@ class _HomePageState extends State<HomePage> {
 
                   TextButton.icon(
                     onPressed: () {
-                      
+                      newPeopleDialog(context,textController: textEditingController);
                     },
-                    icon: Icon(Icons.add, color: Colors.pinkAccent),
-                    label: Text(
+                    icon: const Icon(Icons.add, color: Colors.pinkAccent),
+                    label: const Text(
                       "Añadir jugador",
                       style: TextStyle(color: Colors.cyanAccent),
                     ),
@@ -91,14 +85,13 @@ class _HomePageState extends State<HomePage> {
 
             SizedBox(height: 4.h),
 
-            // Botón principal
             neonButton(
               context,
               text: "Comenzar",
               onPressed: () {
-                Navigator.pushReplacement(
+                Navigator.pushReplacementNamed(
                   context,
-                  MaterialPageRoute(builder: (context) => Playground()),
+                  "/wheel"
                 );
               },
             ),
